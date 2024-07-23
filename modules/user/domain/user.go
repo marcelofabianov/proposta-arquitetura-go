@@ -1,14 +1,13 @@
 package domain
 
-import "time"
-
 type User struct {
-	ID        string
+	ID        ID
 	Name      string
-	Email     string
-	Password  string
-	EnabledAt time.Time
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time
+	Email     Email
+	Password  Password
+	EnabledAt EnabledAt
+	CreatedAt CreatedAt
+	UpdatedAt UpdatedAt
+	DeletedAt DeletedAt
+	Version   Version
 }
