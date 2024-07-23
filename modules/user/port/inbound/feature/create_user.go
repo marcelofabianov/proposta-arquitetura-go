@@ -6,6 +6,13 @@ import (
 	"example/modules/user/domain"
 )
 
+// PKG
+
+type PasswordHasher interface {
+	Hash(data string) (string, error)
+	Compare(data, encodedHash string) (bool, error)
+}
+
 // Repository
 
 type CreateUserRepositoryInput struct {
@@ -29,7 +36,7 @@ type CreateUserUseCaseOutput struct {
 }
 
 type CreateUserUseCase interface {
-	CreateUser(ctx context.Context, input CreateUserUseCaseInput) (CreateUserUseCaseOutput, error)
+	Execute(ctx context.Context, input CreateUserUseCaseInput) (CreateUserUseCaseOutput, error)
 }
 
 // Service
