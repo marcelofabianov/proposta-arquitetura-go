@@ -13,7 +13,7 @@ type EnabledAt *time.Time
 type CreatedAt time.Time
 type UpdatedAt time.Time
 type DeletedAt *time.Time
-type Version int
+type Version int64
 
 func NewID() ID {
 	return ID(uuid.New().String())
@@ -28,5 +28,5 @@ func NewUpdatedAt() UpdatedAt {
 }
 
 func NewVersion() Version {
-	return Version(1)
+	return Version(0)
 }

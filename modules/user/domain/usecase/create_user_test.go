@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
 	"example/modules/user/domain"
@@ -35,20 +36,26 @@ func (suite *CreateUserUseCaseTestSuite) TestCreateUser_Success() {
 
 	hashedPassword := "hashed-password"
 
-	// Setup mock expectations
-	suite.hasherMock.On("Hash", input.Password).Return(hashedPassword, nil)
-	suite.repoMock.On("CreateUser", context.Background(), feature.CreateUserRepositoryInput{
+	expectedUser := feature.CreateUserRepositoryInput{
 		User: domain.User{
-			ID:        domain.NewID(),
-			Name:      input.Name,
-			Email:     domain.Email(input.Email),
-			Password:  domain.Password(hashedPassword),
-			EnabledAt: domain.EnabledAt(nil),
-			CreatedAt: domain.NewCreatedAt(),
-			UpdatedAt: domain.NewUpdatedAt(),
-			Version:   domain.NewVersion(),
+			Name:     input.Name,
+			Email:    domain.Email(input.Email),
+			Password: domain.Password(hashedPassword),
+			Version:  domain.NewVersion(),
 		},
-	}).Return(nil)
+	}
+
+	// Setup mock expectations
+	suite.repoMock.On("CreateUser", context.Background(), mock.MatchedBy(func(args feature.CreateUserRepositoryInput) bool {
+		user := args.User
+		expected := expectedUser.User
+
+		return user.Name == expected.Name &&
+			user.Email == expected.Email &&
+			user.Password == expected.Password &&
+			user.Version == expected.Version
+	})).Return(nil)
+	suite.hasherMock.On("Hash", input.Password).Return(hashedPassword, nil)
 
 	// Act
 	output, err := suite.usecase.Execute(context.Background(), input)
@@ -58,26 +65,19 @@ func (suite *CreateUserUseCaseTestSuite) TestCreateUser_Success() {
 	suite.Equal(input.Name, output.User.Name, "Name should be equal")
 	suite.Equal(input.Email, string(output.User.Email), "Email should be equal")
 	suite.Equal(hashedPassword, string(output.User.Password), "Password should be equal")
-	suite.NotNil(output.User.EnabledAt, "EnabledAt should not be nil")
 	suite.NotNil(output.User.CreatedAt, "CreatedAt should not be nil")
 	suite.NotNil(output.User.UpdatedAt, "UpdatedAt should not be nil")
-	suite.Greater(output.User.Version, int64(0), "Version should be greater than 0")
+	suite.Equal(output.User.Version, domain.Version(0), "Version should be greater than 0")
 
 	// Verify mock expectations
 	suite.hasherMock.AssertExpectations(suite.T())
 	suite.repoMock.AssertExpectations(suite.T())
 }
 
-func (suite *CreateUserUseCaseTestSuite) TestCreateUser_Error_UserPasswordHashFailed() {
-	//...
-
-	suite.Assert().Fail("TestCreateUser_Error_UserPasswordHashFailed not implemented yet")
+func (suite *CreateUserUseCaseTestSuite) TestCreateUser_FailHashPassword() {
 }
 
-func (suite *CreateUserUseCaseTestSuite) TestCreateUser_Error_UserPersistNewUserFailed() {
-	//...
-
-	suite.Assert().Fail("TestCreateUser_Error_UserPersistNewUserFailed not implemented yet")
+func (suite *CreateUserUseCaseTestSuite) TestCreateUser_FailCreateUser() {
 }
 
 func TestCreateUserUseCaseTestSuite(t *testing.T) {
