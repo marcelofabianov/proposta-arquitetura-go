@@ -1,6 +1,6 @@
 package inbound
 
-import "example/modules/user/port/inbound/features"
+import "example/modules/user/port/inbound/feature"
 
 // Inbound / Service
 
@@ -10,19 +10,19 @@ type UserServiceInbound interface {
 
 // Inbound / Service / Create User
 type CreateUserServiceInbound interface {
-	features.CreateUserService
+	feature.CreateUserService
 }
 
 type CreateUserServiceInboundInput struct {
-	features.CreateUserServiceRequest
+	feature.CreateUserServiceRequest
 }
 
 type CreateUserServiceInboundOutput struct {
-	features.CreateUserServicePresenter
+	feature.CreateUserServicePresenter
 }
 
 // Inbound / Repository
 
 type UserRepositoryInbound interface {
-	features.CreateUserRepository
+	feature.CreateUserRepository
 }
