@@ -17,8 +17,27 @@ func NewUserService(createUser feature.CreateUserUseCase) inbound.UserServiceInb
 	}
 }
 
-func (s *UserService) CreateUser(ctx context.Context, req feature.CreateUserServiceInboundInput) (*feature.CreateUserServiceInboundOutput, error) {
-	//...
+func (s *UserService) CreateUser(ctx context.Context, inputS feature.CreateUserServiceInboundInput) (*feature.CreateUserServiceInboundOutput, error) {
+	inputUC := feature.CreateUserUseCaseInput{
+		Name:     inputS.Name,
+		Email:    inputS.Email,
+		Password: inputS.Password,
+	}
 
-	return nil, nil
+	outputUC, err := s.createUser.Execute(ctx, inputUC)
+	if err != nil {
+		return nil, err
+	}
+
+	outputS := &feature.CreateUserServiceInboundOutput{
+		ID:        outputUC.User.ID.String(),
+		Name:      outputUC.User.Name,
+		Email:     outputUC.User.Email.String(),
+		CreatedAt: outputUC.User.CreatedAt.String(),
+		UpdatedAt: outputUC.User.UpdatedAt.String(),
+	}
+
+	//TODO: Dispatch UserCreated event
+
+	return outputS, nil
 }
