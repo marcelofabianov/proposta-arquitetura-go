@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 
-	"example/modules/user/port/inbound"
 	"example/modules/user/port/inbound/feature"
 )
 
@@ -12,7 +11,7 @@ type UserRepository struct {
 	Db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) inbound.UserRepositoryInbound {
+func NewUserRepository(db *sql.DB) feature.UserRepository {
 	return &UserRepository{Db: db}
 }
 

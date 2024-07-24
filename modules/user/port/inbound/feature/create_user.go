@@ -23,6 +23,10 @@ type CreateUserRepository interface {
 	CreateUser(ctx context.Context, input CreateUserRepositoryInput) error
 }
 
+type UserRepository interface {
+	CreateUserRepository
+}
+
 // UseCase
 
 type CreateUserUseCaseInput struct {
@@ -41,21 +45,56 @@ type CreateUserUseCase interface {
 
 // Service
 
-type CreateUserServiceRequest struct {
-	Name     string `json:"name" validate:"required,min=3,max=100"`
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=8,max=150"`
+type CreateUserServiceInput struct {
+	Name     string
+	Email    string
+	Password string
 }
 
-type CreateUserServicePresenter struct {
+type CreateUserServiceOutput struct {
+	ID        string
+	Name      string
+	Email     string
+	EnabledAt string
+	CreatedAt string
+	UpdatedAt string
+}
+
+// Service / Inbound
+type CreateUserServiceInboundInput struct {
+	Name     string
+	Email    string
+	Password string
+}
+
+type CreateUserServiceInboundOutput struct {
+	ID        string
+	Name      string
+	Email     string
+	EnabledAt string
+	CreatedAt string
+	UpdatedAt string
+}
+
+type CreateUserServiceInbound interface {
+	CreateUser(ctx context.Context, req CreateUserServiceInboundInput) (*CreateUserServiceInboundOutput, error)
+}
+
+// Request
+
+type CreateUserRequest struct {
+	Name     string `json:"name" required:"true"`
+	Email    string `json:"email" required:"true"`
+	Password string `json:"password" required:"true"`
+}
+
+// Presenter
+
+type CreateUserPresenter struct {
 	ID        string `json:"id"`
 	Name      string `json:"name"`
 	Email     string `json:"email"`
 	EnabledAt string `json:"enabled_at"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
-}
-
-type CreateUserService interface {
-	CreateUser(ctx context.Context, request CreateUserServiceRequest) (CreateUserServicePresenter, error)
 }
