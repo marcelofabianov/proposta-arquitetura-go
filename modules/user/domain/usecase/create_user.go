@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 
 	"example/modules/user/domain"
 	"example/modules/user/port/inbound/feature"
@@ -32,8 +31,6 @@ func (uc *CreateUserUseCase) Execute(ctx context.Context, input feature.CreateUs
 		UpdatedAt: domain.NewUpdatedAt(),
 		Version:   domain.NewVersion(),
 	}
-
-	fmt.Println("user", user)
 
 	err = uc.repository.CreateUser(ctx, feature.CreateUserRepositoryInput{User: user})
 	if err != nil {
